@@ -61,4 +61,4 @@ VITE_WS_BASE_URL=ws://localhost:8080
 
 此前端需要 Sprite 后端服务运行在 port 8080。
 
-后端项目: [digital-beings-java](https://github.com/lingfeng-xiao/digital-beings-java)
+后端项目: [sprite-be](https://github.com/lingfeng-xiao/sprite-be)
