@@ -304,7 +304,7 @@ function QuickStats() {
 }
 
 export default function DashboardPage() {
-  const { data: spriteState, isLoading } = useSpriteState()
+  const { isLoading } = useSpriteState()
 
   if (isLoading) {
     return (

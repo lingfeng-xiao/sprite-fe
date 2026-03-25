@@ -4,16 +4,48 @@ import { useSpriteState } from '@/hooks/useSpriteData'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Send, RefreshCw, Trash2, Loader2 } from 'lucide-react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { useSetPageInfo } from '@/contexts/PageContext'
+import { Send, RefreshCw, Trash2, Loader2, MessageCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
 
+const statusConfig = {
+  connecting: { color: 'bg-yellow-500', label: '连接中' },
+  connected: { color: 'bg-green-500', label: '已连接' },
+  disconnected: { color: 'bg-gray-500', label: '未连接' },
+  error: { color: 'bg-red-500', label: '错误' },
+} as const
+
+function TypingIndicator() {
+  return (
+    <div className="flex justify-start">
+      <div className="bg-muted rounded-lg px-4 py-3">
+        <div className="flex gap-1">
+          <span className="h-2 w-2 animate-bounce bg-muted-foreground" style={{ animationDelay: '0ms' }} />
+          <span className="h-2 w-2 animate-bounce bg-muted-foreground" style={{ animationDelay: '150ms' }} />
+          <span className="h-2 w-2 animate-bounce bg-muted-foreground" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ChatPage() {
+  const setPageInfo = useSetPageInfo()
   const { messages, isTyping, connectionStatus, connect, sendMessage, clearMessages } = useChat()
   const { data: spriteState } = useSpriteState()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setPageInfo({
+      title: '聊天',
+      description: '与 Sprite 对话',
+    })
+    return () => setPageInfo(null)
+  }, [setPageInfo])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -40,25 +72,20 @@ export default function ChatPage() {
     }
   }
 
-  const statusColor = {
-    connecting: 'bg-yellow-500',
-    connected: 'bg-green-500',
-    disconnected: 'bg-gray-500',
-    error: 'bg-red-500',
-  }[connectionStatus]
+  const status = statusConfig[connectionStatus]
 
   return (
     <div className="flex h-full flex-col">
       <Card className="flex flex-1 flex-col overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="flex items-center space-x-4">
-            <CardTitle className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="text-2xl">{spriteState?.identity?.emoji || '🤖'}</span>
-              <span>{spriteState?.identity?.name || 'Sprite'}</span>
-            </CardTitle>
+              <span className="text-lg font-semibold">{spriteState?.identity?.name || 'Sprite'}</span>
+            </div>
             <Badge variant="outline" className="flex items-center gap-1">
-              <span className={`h-2 w-2 rounded-full ${statusColor}`} />
-              {connectionStatus === 'connected' ? '已连接' : '未连接'}
+              <span className={`h-2 w-2 rounded-full ${status.color}`} />
+              {status.label}
             </Badge>
           </div>
           <div className="flex gap-2">
@@ -73,9 +100,11 @@ export default function ChatPage() {
 
         <CardContent className="flex-1 overflow-y-auto space-y-4">
           {messages.length === 0 && (
-            <div className="flex h-full items-center justify-center text-muted-foreground">
-              <p>开始与 Sprite 对话吧</p>
-            </div>
+            <EmptyState
+              icon={MessageCircle}
+              title="开始与 Sprite 对话吧"
+              description="输入消息开始聊天"
+            />
           )}
 
           {messages.map((msg) => (
@@ -98,18 +127,7 @@ export default function ChatPage() {
             </div>
           ))}
 
-          {isTyping && (
-            <div className="flex justify-start">
-              <div className="bg-muted rounded-lg px-4 py-3">
-                <div className="flex gap-1">
-                  <span className="h-2 w-2 animate-bounce bg-muted-foreground" style={{ animationDelay: '0ms' }} />
-                  <span className="h-2 w-2 animate-bounce bg-muted-foreground" style={{ animationDelay: '150ms' }} />
-                  <span className="h-2 w-2 animate-bounce bg-muted-foreground" style={{ animationDelay: '300ms' }} />
-                </div>
-              </div>
-            </div>
-          )}
-
+          {isTyping && <TypingIndicator />}
           <div ref={messagesEndRef} />
         </CardContent>
 

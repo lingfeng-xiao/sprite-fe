@@ -10,6 +10,14 @@ import type {
   CoordinationStatus,
   BackupListResult,
   BackupStatus,
+  WorkerInfo,
+  SpriteInfo,
+  CollaborationSession,
+  Task,
+  CollaborationStatus,
+  DiscoveryResult,
+  TaskType,
+  TaskStatus,
 } from '@/types/api'
 
 // Sprite State
@@ -76,3 +84,41 @@ export const triggerBackup = () =>
 
 export const restoreFromBackup = (timestamp: string) =>
   apiClient.post('/api/sprite/backup/restore', null, { params: { timestamp } })
+
+// Agent Workers
+export const getAgentWorkers = () =>
+  apiClient.get<WorkerInfo[]>('/api/agent/workers').then((r) => r.data)
+
+// ==================== Team Collaboration ====================
+
+export const getTeamSprites = () =>
+  apiClient.get<SpriteInfo[]>('/api/team/sprites').then((r) => r.data)
+
+export const getTeamSessions = () =>
+  apiClient.get<CollaborationSession[]>('/api/team/sessions').then((r) => r.data)
+
+export const createTeamSession = (targetSpriteId: string) =>
+  apiClient.post<CollaborationSession>('/api/team/sessions', { targetSpriteId }).then((r) => r.data)
+
+export const getSessionDetails = (sessionId: string) =>
+  apiClient.get<CollaborationSession>(`/api/team/sessions/${sessionId}`).then((r) => r.data)
+
+export const discoverSprites = () =>
+  apiClient.post<DiscoveryResult>('/api/team/sprites/discover').then((r) => r.data)
+
+export const distributeTask = (
+  sessionId: string,
+  type: TaskType,
+  payload: Record<string, unknown>,
+  assignedTo: string
+) =>
+  apiClient.post<Task>(`/api/team/sessions/${sessionId}/tasks`, { type, payload, assignedTo }).then((r) => r.data)
+
+export const getSessionTasks = (sessionId: string) =>
+  apiClient.get<Task[]>(`/api/team/sessions/${sessionId}/tasks`).then((r) => r.data)
+
+export const updateTaskStatus = (taskId: string, status: TaskStatus, result?: string) =>
+  apiClient.put<Task>(`/api/team/tasks/${taskId}/status`, { status, result }).then((r) => r.data)
+
+export const getCollaborationStatus = () =>
+  apiClient.get<CollaborationStatus>('/api/team/status').then((r) => r.data)

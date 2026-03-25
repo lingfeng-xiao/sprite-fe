@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { ChatWebSocket, type WebSocketStatus } from '@/api/websocket'
-import { useChatStore, type ChatMessageItem } from '@/stores/chatStore'
+import { useChatStore } from '@/stores/chatStore'
 import type { ChatMessage } from '@/types/websocket'
 
 export function useChat() {

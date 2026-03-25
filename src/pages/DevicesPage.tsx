@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { getAllDevices, getDeviceStatus, triggerDeviceSync } from '@/api/spriteApi'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -63,9 +63,8 @@ export default function DevicesPage() {
     queryFn: getDeviceStatus,
   })
 
-  const { mutate: sync, isPending: isSyncing } = useQuery({
-    queryKey: ['sprite', 'devices', 'sync'],
-    queryFn: triggerDeviceSync,
+  const { mutate: sync, isPending: isSyncing } = useMutation({
+    mutationFn: triggerDeviceSync,
   })
 
   const handleSync = () => {

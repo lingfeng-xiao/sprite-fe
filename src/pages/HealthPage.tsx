@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Activity, Cpu, HardDrive, Wifi, AlertCircle, CheckCircle, XCircle } from 'lucide-react'
+import { Activity, Cpu, HardDrive, AlertCircle, CheckCircle, XCircle } from 'lucide-react'
 
 function HealthStatusCard() {
   const { data, isLoading } = useHealthDetails()
@@ -106,8 +106,8 @@ function LlmStatusCard() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">连续失败次数</span>
-            <span className={data?.llmConsecutiveFailures > 0 ? 'text-red-500' : ''}>
-              {data?.llmConsecutiveFailures || 0}
+            <span className={(data?.llmConsecutiveFailures ?? 0) > 0 ? 'text-red-500' : ''}>
+              {data?.llmConsecutiveFailures ?? 0}
             </span>
           </div>
           <div className="flex justify-between text-sm">

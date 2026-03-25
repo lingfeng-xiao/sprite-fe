@@ -1,92 +1,66 @@
-// Sprite State Types
+// Sprite State Types - simplified based on actual API response
 export interface SpriteState {
-  identity: SelfModel
+  identity: {
+    beingId: string
+    name: string
+    essence: string
+    emoji: string
+    vibe: string
+    createdAt: string
+    continuityChain: string
+    personality?: {
+      openness: number
+      conscientiousness: number
+      extraversion: number
+      agreeableness: number
+      neuroticism: number
+    }
+    capabilities?: {
+      skills: Record<string, string>
+    }
+    avatars?: Array<{
+      deviceId: string
+      displayName: string
+      status: string
+    }>
+    metacognition?: {
+      learningStyle: string
+      decisionPatterns: string[]
+      strengths: string[]
+      weaknesses: string[]
+    }
+    growthHistory?: {
+      totalGrowthCycles: number
+      lastGrowthTime: string
+      growthRate: number
+    }
+    evolutionLevel?: number
+    evolutionCount?: number
+  }
   platform: 'CLOUD' | 'PHONE' | 'PC'
-  worldModel: WorldModel
-  memoryStatus: MemoryStatus
+  worldModel: {
+    owner: {
+      ownerId: string
+      name: string
+      preferences: Record<string, unknown>
+      habits: string[]
+    }
+    context: {
+      currentActivity: string
+      location: string
+      timeOfDay: string
+      emotionalState: string
+    }
+  }
+  memoryStatus: {
+    sensoryCount: number
+    workingMemoryUsed: number
+    workingMemoryMax: number
+    longTermCount: number
+  }
   lastCycleTime: string
   isRunning: boolean
   hasLlmSupport: boolean
-}
-
-export interface SelfModel {
-  identity: IdentityCore
-  personality: Personality
-  capabilities: Capabilities
-  avatars: Avatar[]
-  metacognition: Metacognition
-  growthHistory: GrowthHistory
-  evolutionLevel: number
-  evolutionCount: number
-}
-
-export interface IdentityCore {
-  beingId: string
-  name: string
-  essence: string
-  emoji: string
-  vibe: string
-  createdAt: string
-  continuityChain: string
-}
-
-export interface Personality {
-  openness: number
-  conscientiousness: number
-  extraversion: number
-  agreeableness: number
-  neuroticism: number
-}
-
-export interface Capabilities {
-  skills: Record<string, SkillLevel>
-}
-
-export type SkillLevel = 'MASTER' | 'ADVANCED' | 'BASIC' | 'NONE'
-
-export interface Avatar {
-  deviceId: string
-  displayName: string
-  status: string
-}
-
-export interface Metacognition {
-  learningStyle: string
-  decisionPatterns: string[]
-  strengths: string[]
-  weaknesses: string[]
-}
-
-export interface GrowthHistory {
-  totalGrowthCycles: number
-  lastGrowthTime: string
-  growthRate: number
-}
-
-export interface WorldModel {
-  owner: Owner
-  context: Context
-}
-
-export interface Owner {
-  ownerId: string
-  name: string
-  preferences: Record<string, unknown>
-  habits: string[]
-}
-
-export interface Context {
-  currentActivity: string
-  location: string
-  timeOfDay: string
-  emotionalState: string
-}
-
-export interface MemoryStatus {
-  sensoryCount: number
-  workingMemoryUsed: number
-  workingMemoryMax: number
-  longTermCount: number
 }
 
 // Cognition Types
@@ -102,20 +76,12 @@ export interface CognitionDashboardData {
 }
 
 export interface PhaseStats {
-  phase: CognitionPhase
+  phase: string
   eventCount: number
   successCount: number
   successRate: number
   avgDurationMs: number
 }
-
-export type CognitionPhase =
-  | 'PERCEPTION'
-  | 'CONTEXT_BUILD'
-  | 'REASONING'
-  | 'DECISION'
-  | 'ACTION'
-  | 'LEARNING'
 
 export interface CognitionCycle {
   startTime: string
@@ -307,4 +273,77 @@ export interface Backup {
 export interface BackupStatus {
   backupEnabled: boolean
   lastBackupTime: string | null
+}
+
+// Agent Worker Types
+export interface WorkerInfo {
+  workerId: string
+  type: WorkerType
+  state: WorkerState
+  registeredAt: string
+  lastHeartbeat: string
+}
+
+export type WorkerType = 'PERCEPTION' | 'COGNITION' | 'ACTION'
+export type WorkerState = 'RUNNING' | 'IDLE' | 'FAILED' | 'STOPPED'
+
+// ==================== Team Collaboration Types ====================
+
+export type CollaborationSpriteState = 'AVAILABLE' | 'BUSY' | 'UNREACHABLE' | 'UNKNOWN'
+
+export interface SpriteCapability {
+  name: string
+  level: string
+  confidence: number
+}
+
+export interface SpriteInfo {
+  id: string
+  name: string
+  capabilities: SpriteCapability[]
+  version: string
+  endpoint: string
+  lastSeen: string
+  state: CollaborationSpriteState
+  compatibilityScore: number
+}
+
+export type SessionStatus = 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'COMPLETED' | 'FAILED'
+
+export interface CollaborationSession {
+  id: string
+  participants: string[]
+  status: SessionStatus
+  sharedContext: Record<string, unknown>
+  createdAt: string
+  lastActivity: string
+  taskIds: string[]
+}
+
+export type TaskType = 'GENERAL' | 'ANALYSIS' | 'COORDINATION' | 'EXECUTION' | 'MONITORING'
+
+export type TaskStatus = 'PENDING' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
+
+export interface Task {
+  id: string
+  type: TaskType
+  payload: Record<string, unknown>
+  assignedTo: string
+  status: TaskStatus
+  createdAt: string
+  completedAt: string | null
+  result: string | null
+}
+
+export interface CollaborationStatus {
+  localSpriteId: string
+  discoveredSpritesCount: number
+  activeSessionsCount: number
+  pendingTasksCount: number
+  timestamp: string
+}
+
+export interface DiscoveryResult {
+  sprites: SpriteInfo[]
+  status: CollaborationStatus
 }

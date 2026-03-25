@@ -6,6 +6,11 @@ import {
   getEvolutionDashboard,
   getEmotionDashboard,
   getHealthDetails,
+  getAgentWorkers,
+  getTeamSprites,
+  getTeamSessions,
+  getCollaborationStatus,
+  discoverSprites,
 } from '@/api/spriteApi'
 import { QUERY_KEYS, REFRESH_INTERVALS } from '@/lib/constants'
 
@@ -15,6 +20,8 @@ export function useSpriteState() {
     queryFn: getSpriteState,
     refetchInterval: REFRESH_INTERVALS.spriteState,
     staleTime: 10000,
+    retry: 1,
+    throwOnError: false,
   })
 }
 
@@ -60,5 +67,51 @@ export function useHealthDetails() {
     queryFn: getHealthDetails,
     refetchInterval: REFRESH_INTERVALS.health,
     staleTime: 30000,
+  })
+}
+
+export function useAgentWorkers() {
+  return useQuery({
+    queryKey: QUERY_KEYS.agentWorkers,
+    queryFn: getAgentWorkers,
+    refetchInterval: REFRESH_INTERVALS.agentWorkers,
+    staleTime: 10000,
+  })
+}
+
+// ==================== Team Collaboration Hooks ====================
+
+export function useTeamSprites() {
+  return useQuery({
+    queryKey: QUERY_KEYS.teamSprites,
+    queryFn: getTeamSprites,
+    refetchInterval: REFRESH_INTERVALS.teamSprites,
+    staleTime: 15000,
+  })
+}
+
+export function useTeamSessions() {
+  return useQuery({
+    queryKey: QUERY_KEYS.teamSessions,
+    queryFn: getTeamSessions,
+    refetchInterval: REFRESH_INTERVALS.teamSessions,
+    staleTime: 10000,
+  })
+}
+
+export function useCollaborationStatus() {
+  return useQuery({
+    queryKey: QUERY_KEYS.collaborationStatus,
+    queryFn: getCollaborationStatus,
+    refetchInterval: REFRESH_INTERVALS.collaborationStatus,
+    staleTime: 15000,
+  })
+}
+
+export function useDiscoverSprites() {
+  return useQuery({
+    queryKey: ['team', 'discover'],
+    queryFn: discoverSprites,
+    enabled: false,
   })
 }

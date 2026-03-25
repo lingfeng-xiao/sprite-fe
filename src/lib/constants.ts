@@ -14,6 +14,10 @@ export const QUERY_KEYS = {
   health: ['sprite', 'health'] as const,
   devices: ['sprite', 'devices'] as const,
   backup: ['sprite', 'backup'] as const,
+  agentWorkers: ['agent', 'workers'] as const,
+  teamSprites: ['team', 'sprites'] as const,
+  teamSessions: ['team', 'sessions'] as const,
+  collaborationStatus: ['team', 'status'] as const,
 } as const
 
 export const REFRESH_INTERVALS = {
@@ -24,4 +28,8 @@ export const REFRESH_INTERVALS = {
   emotions: 60000,
   health: 60000,
   devices: 30000,
+  agentWorkers: 15000,
+  teamSprites: 30000,
+  teamSessions: 15000,
+  collaborationStatus: 30000,
 } as const

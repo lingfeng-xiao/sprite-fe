@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { getBackupStatus, getBackupList, triggerBackup } from '@/api/spriteApi'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -52,7 +52,7 @@ function GeneralSettings() {
 }
 
 function BackupSettings() {
-  const { data: backupStatus, isLoading: statusLoading, refetch } = useQuery({
+  const { data: backupStatus, refetch } = useQuery({
     queryKey: ['sprite', 'backup', 'status'],
     queryFn: getBackupStatus,
   })
@@ -62,9 +62,8 @@ function BackupSettings() {
     queryFn: getBackupList,
   })
 
-  const { mutate: backup, isPending: isBackingUp } = useQuery({
-    queryKey: ['sprite', 'backup', 'trigger'],
-    queryFn: triggerBackup,
+  const { mutate: backup, isPending: isBackingUp } = useMutation({
+    mutationFn: triggerBackup,
   })
 
   const handleBackup = () => {
@@ -175,7 +174,7 @@ function EvolutionSettings() {
         </div>
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">进化次数</span>
-          <span className="text-sm">{spriteState?.evolutionCount || 0}</span>
+          <span className="text-sm">{spriteState?.identity?.evolutionCount || 0}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">进化率</span>
