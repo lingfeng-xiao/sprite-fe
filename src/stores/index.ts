@@ -1,0 +1,11 @@
+// Unified store exports by bounded context
+export { useRuntimeStore } from './runtimeStore'
+export type { RuntimeState } from './runtimeStore'
+export { useCycleStore } from './cycleStore'
+export type { CycleMetrics, PhaseStats, CognitionCycle, CognitionEvent } from './cycleStore'
+export { useMemoryStore } from './memoryStore'
+export type { MemoryStats, WorkingMemory, EpisodicMemory, SemanticMemory } from './memoryStore'
+export { useEvolutionStore } from './evolutionStore'
+export type { EvolutionDashboard, EvolutionProposal, EvolutionSnapshot } from './evolutionStore'
+export { useUIStore } from './uiStore'
+export type { UIState } from './uiStore'
