@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { ChevronDown, ChevronRight, Sparkles, Settings, Cpu, Bot, Smartphone, Zap, MessageCircle, User, Heart, Target, Database, Brain, LayoutDashboard, Heart as HeartIcon, Activity, Users } from 'lucide-react'
+import { ChevronDown, ChevronRight, Sparkles, Settings, Zap, MessageCircle, User, Heart, Target, Database, Brain, LayoutDashboard, Heart as HeartIcon, Activity, Users, Wrench, Network } from 'lucide-react'
 import { useState } from 'react'
 
 export interface NavItem {
@@ -41,9 +41,8 @@ export const navigationConfig: NavSection[] = [
     id: 'system',
     title: '系统',
     items: [
-      { to: '/devices', icon: Smartphone, label: '设备' },
-      { to: '/runtime', icon: Cpu, label: '运行时' },
-      { to: '/agents', icon: Bot, label: 'Agent' },
+      { to: '/skills', icon: Wrench, label: '技能' },
+      { to: '/mcp', icon: Network, label: 'MCP' },
       { to: '/settings', icon: Settings, label: '设置' },
     ],
   },

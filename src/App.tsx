@@ -5,12 +5,7 @@ import { useEffect } from 'react'
 
 // Pages
 import ChatPage from '@/pages/ChatPage'
-import HealthPage from '@/pages/HealthPage'
-import DevicesPage from '@/pages/DevicesPage'
-import EmotionsPage from '@/pages/EmotionsPage'
 import SettingsPage from '@/pages/SettingsPage'
-import AgentsPage from '@/pages/AgentsPage'
-import TeamPage from '@/pages/TeamPage'
 import { useSpriteStore } from '@/stores/spriteStore'
 
 // Life Surface Pages
@@ -28,6 +23,13 @@ import EvolutionProposalPage from '@/pages/EvolutionProposalPage'
 import CyclesPage from '@/pages/CyclesPage'
 import CycleDetailPage from '@/pages/CycleDetailPage'
 
+// Dashboard Page
+import DashboardPage from '@/pages/DashboardPage'
+
+// Configuration Pages
+import SkillsPage from '@/pages/SkillsPage'
+import McpPage from '@/pages/McpPage'
+
 function AppContent() {
   const { data } = useSpriteState()
   const { setSpriteState: setStoreState } = useSpriteStore()
@@ -41,8 +43,8 @@ function AppContent() {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        {/* Default redirect to Life */}
-        <Route index element={<Navigate to="/life" replace />} />
+        {/* Default page - Dashboard */}
+        <Route index element={<DashboardPage />} />
 
         {/* Life Surface */}
         <Route path="life" element={<LifePage />} />
@@ -55,10 +57,9 @@ function AppContent() {
         <Route path="console" element={<ChatPage />} />
         <Route path="chat" element={<ChatPage />} />
 
-        {/* System Surface */}
-        <Route path="devices" element={<DevicesPage />} />
-        <Route path="runtime" element={<HealthPage />} />
-        <Route path="agents" element={<AgentsPage />} />
+        {/* System Surface - Configuration */}
+        <Route path="skills" element={<SkillsPage />} />
+        <Route path="mcp" element={<McpPage />} />
         <Route path="settings" element={<SettingsPage />} />
 
         {/* Cycles Surface */}
@@ -69,16 +70,14 @@ function AppContent() {
         <Route path="evolution" element={<EvolutionPage />} />
         <Route path="evolution/:id" element={<EvolutionProposalPage />} />
 
-        {/* Legacy Routes - Redirect to new surfaces */}
-        <Route path="dashboard" element={<Navigate to="/life" replace />} />
-        <Route path="emotions" element={<Navigate to="/self" replace />} />
-        <Route path="team" element={<Navigate to="/relationship" replace />} />
-        <Route path="health" element={<Navigate to="/runtime" replace />} />
-
-        {/* Keep old routes for backwards compatibility */}
-        <Route path="health-legacy" element={<HealthPage />} />
-        <Route path="team-legacy" element={<TeamPage />} />
-        <Route path="emotions-legacy" element={<EmotionsPage />} />
+        {/* Legacy Routes - Redirect deprecated pages to dashboard */}
+        <Route path="dashboard" element={<Navigate to="/" replace />} />
+        <Route path="health" element={<Navigate to="/" replace />} />
+        <Route path="devices" element={<Navigate to="/" replace />} />
+        <Route path="agents" element={<Navigate to="/" replace />} />
+        <Route path="runtime" element={<Navigate to="/" replace />} />
+        <Route path="emotions" element={<Navigate to="/" replace />} />
+        <Route path="team" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   )

@@ -18,6 +18,11 @@ export const QUERY_KEYS = {
   teamSprites: ['team', 'sprites'] as const,
   teamSessions: ['team', 'sessions'] as const,
   collaborationStatus: ['team', 'status'] as const,
+  skills: ['skills'] as const,
+  skill: ['skill'] as const,
+  mcpServerStatus: ['mcp', 'server'] as const,
+  mcpClientStatus: ['mcp', 'client'] as const,
+  mcpClientTools: ['mcp', 'client', 'tools'] as const,
 } as const
 
 export const REFRESH_INTERVALS = {
@@ -32,4 +37,8 @@ export const REFRESH_INTERVALS = {
   teamSprites: 30000,
   teamSessions: 15000,
   collaborationStatus: 30000,
+  skills: 30000,
+  mcpServerStatus: 15000,
+  mcpClientStatus: 15000,
+  mcpClientTools: 30000,
 } as const

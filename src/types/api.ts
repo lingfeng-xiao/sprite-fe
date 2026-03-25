@@ -347,3 +347,76 @@ export interface DiscoveryResult {
   sprites: SpriteInfo[]
   status: CollaborationStatus
 }
+
+// ==================== Skill Types ====================
+
+export interface SkillParameter {
+  name: string
+  type: string
+  required: boolean
+  description?: string
+  defaultValue?: string
+}
+
+export interface SkillInfo {
+  id: string
+  name: string
+  description: string
+  version: string
+  triggers: string[]
+  parameters: SkillParameter[]
+  async: boolean
+}
+
+export interface SkillExecutionResult {
+  success: boolean
+  message: string
+  data: unknown
+  durationMs: number
+  error?: string
+}
+
+// ==================== MCP Types ====================
+
+export interface McpServerStatus {
+  running: boolean
+  toolCount?: number
+  sessionCount?: number
+  port?: number
+  transport?: string
+}
+
+export interface McpServerInfo {
+  name: string
+  uri: string
+  connected: boolean
+  toolCount: number
+}
+
+export interface McpToolInfo {
+  name: string
+  description: string
+  inputSchema: Record<string, unknown>
+}
+
+export interface McpClientStatus {
+  connectedServers: number
+  servers: McpServerInfo[]
+}
+
+export interface McpToolsResponse {
+  tools: McpToolInfo[]
+  count: number
+  serverCount: number
+}
+
+// ==================== Model Config Types ====================
+
+export interface ModelConfig {
+  provider: string
+  modelName: string
+  apiKey: string
+  baseUrl: string
+  temperature: number
+  maxTokens: number
+}

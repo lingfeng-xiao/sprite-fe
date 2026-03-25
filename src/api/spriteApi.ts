@@ -18,6 +18,7 @@ import type {
   DiscoveryResult,
   TaskType,
   TaskStatus,
+  ModelConfig,
 } from '@/types/api'
 
 // Sprite State
@@ -122,3 +123,11 @@ export const updateTaskStatus = (taskId: string, status: TaskStatus, result?: st
 
 export const getCollaborationStatus = () =>
   apiClient.get<CollaborationStatus>('/api/team/status').then((r) => r.data)
+
+// ==================== Model Config ====================
+
+export const getModelConfig = () =>
+  apiClient.get<ModelConfig>('/api/model/config').then((r) => r.data)
+
+export const updateModelConfig = (config: ModelConfig) =>
+  apiClient.put<ModelConfig>('/api/model/config', config).then((r) => r.data)
