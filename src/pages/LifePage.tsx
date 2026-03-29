@@ -1,243 +1,244 @@
-import { useIdentityStore } from '@/stores/identityStore'
-import { useSelfStore } from '@/stores/selfStore'
-import { useRelationshipStore } from '@/stores/relationshipStore'
-import { useGoalStore } from '@/stores/goalStore'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { PageSection } from '@/components/layout/PageSection'
-import { PageFooter } from '@/components/layout/PageLayout'
-import { DataCard, StatCard } from '@/components/ui/DataCard'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import {
-  Sparkles,
-  User,
-  Heart,
-  Target,
-  Zap,
-  ChevronRight,
-} from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Brain, Compass, Loader2, Send, Sparkles } from 'lucide-react'
 import { useSetPageInfo } from '@/contexts/PageContext'
-import { useEffect } from 'react'
+import { useAutonomyStatus, useLifeJournal, useLifeSnapshot } from '@/hooks/useSpriteData'
+import { QUERY_KEYS } from '@/lib/constants'
+import { sendLifeCommand } from '@/api/spriteApi'
+import type { LifeCommandType } from '@/types/api'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
-function IdentitySummary() {
-  const { profile, getIdentityStatement } = useIdentityStore()
-
-  return (
-    <DataCard
-      title="生命身份"
-      icon={Sparkles}
-      loading={!profile}
-    >
-      {profile && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
-              {profile.emoji}
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold">{profile.displayName}</h3>
-              <p className="text-sm text-muted-foreground">{profile.vibe}</p>
-            </div>
-          </div>
-          <p className="text-sm">{profile.essence}</p>
-          <Badge variant="outline" className="text-xs">
-            {getIdentityStatement()}
-          </Badge>
-        </div>
-      )}
-    </DataCard>
-  )
-}
-
-function SelfSummary() {
-  const { selfState, currentFocus, getEnergyPercent, getCoherencePercent, getSelfSummary } = useSelfStore()
-
-  if (!selfState) {
-    return (
-      <DataCard title="自我状态" icon={User} loading />
-    )
-  }
-
-  return (
-    <DataCard title="自我状态" icon={User}>
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <StatCard
-            progress={{ value: getEnergyPercent(), label: '能量' }}
-          >
-            <p className="text-2xl font-bold">{getEnergyPercent()}%</p>
-          </StatCard>
-          <StatCard
-            progress={{ value: getCoherencePercent(), label: '一致性' }}
-          >
-            <p className="text-2xl font-bold">{getCoherencePercent()}%</p>
-          </StatCard>
-        </div>
-
-        <div className="space-y-2">
-          <p className="text-sm font-medium">当前焦点</p>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary">
-              {currentFocus?.type || 'IDLE'}
-            </Badge>
-            <span className="text-sm text-muted-foreground">
-              {currentFocus?.description || '无'}
-            </span>
-          </div>
-        </div>
-
-        <p className="text-xs text-muted-foreground">{getSelfSummary()}</p>
-      </div>
-    </DataCard>
-  )
-}
-
-function RelationshipSummary() {
-  const { profile, trustState, getRelationshipSummary, getActiveProjects } = useRelationshipStore()
-
-  if (!profile) {
-    return (
-      <DataCard title="关系状态" icon={Heart} loading />
-    )
-  }
-
-  return (
-    <DataCard title="关系状态" icon={Heart}>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground">关系类型</p>
-            <Badge>{profile.type}</Badge>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">信任等级</p>
-            <Badge variant={trustState?.level === 'FULL' ? 'default' : 'secondary'}>
-              {trustState?.level || '未知'}
-            </Badge>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">关系强度</span>
-            <span className="font-medium">{(profile.strength * 100).toFixed(0)}%</span>
-          </div>
-          <Progress value={profile.strength * 100} className="h-2" />
-        </div>
-
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">共同项目</span>
-          <span className="font-medium">{getActiveProjects().length} 个活跃</span>
-        </div>
-
-        <p className="text-xs text-muted-foreground">{getRelationshipSummary()}</p>
-      </div>
-    </DataCard>
-  )
-}
-
-function GoalSummary() {
-  const { getActiveGoals, getActiveTracks, getActiveIntentionsList, getTopPriorityIntention, getGoalSummary } = useGoalStore()
-
-  const activeGoals = getActiveGoals()
-  const activeTracks = getActiveTracks()
-  const topIntention = getTopPriorityIntention()
-
-  return (
-    <DataCard title="目标状态" icon={Target}>
-      <div className="space-y-4">
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <p className="text-2xl font-bold">{activeGoals.length}</p>
-            <p className="text-xs text-muted-foreground">长期目标</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold">{activeTracks.length}</p>
-            <p className="text-xs text-muted-foreground">中期追踪</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold">{getActiveIntentionsList().length}</p>
-            <p className="text-xs text-muted-foreground">当前意向</p>
-          </div>
-        </div>
-
-        {topIntention && (
-          <div className="space-y-2">
-            <p className="text-sm font-medium">最高优先级</p>
-            <div className="flex items-center gap-2">
-              <Badge variant={topIntention.urgency === 'CRITICAL' ? 'destructive' : 'secondary'}>
-                {topIntention.urgency}
-              </Badge>
-              <span className="text-sm">{topIntention.description}</span>
-            </div>
-          </div>
-        )}
-
-        <p className="text-xs text-muted-foreground">{getGoalSummary()}</p>
-      </div>
-    </DataCard>
-  )
-}
-
-function QuickLinks() {
-  const links = [
-    { to: '/self', icon: User, label: '自我详情' },
-    { to: '/relationship', icon: Heart, label: '关系详情' },
-    { to: '/goals', icon: Target, label: '目标详情' },
-    { to: '/console', icon: Zap, label: '进入控制台' },
-  ]
-
-  return (
-    <PageSection title="快速入口" cols="4">
-      {links.map((link) => (
-        <Link
-          key={link.to}
-          to={link.to}
-          className="flex items-center gap-3 rounded-lg border p-3 hover:bg-accent transition-colors"
-        >
-          <link.icon className="h-5 w-5 text-muted-foreground" />
-          <span className="text-sm font-medium">{link.label}</span>
-          <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
-        </Link>
-      ))}
-    </PageSection>
-  )
-}
+const commandTypes: LifeCommandType[] = ['ASK', 'TASK', 'RESEARCH', 'ACTION', 'LEARNING', 'DECISION']
 
 export default function LifePage() {
   const setPageInfo = useSetPageInfo()
-  const { profile } = useIdentityStore()
+  const queryClient = useQueryClient()
+  const { data: lifeSnapshot } = useLifeSnapshot()
+  const { data: autonomyStatus } = useAutonomyStatus()
+  const { data: journal } = useLifeJournal(8)
+  const [commandType, setCommandType] = useState<LifeCommandType>('ASK')
+  const [command, setCommand] = useState('')
+  const [latestReply, setLatestReply] = useState<string | null>(null)
 
   useEffect(() => {
     setPageInfo({
-      title: `${profile?.emoji || '✨'} 生命界面`,
-      description: '了解 Sprite 的生命状态、身份认同与成长轨迹',
+      title: 'Life',
+      description: 'A daily pulse view of the digital being, its memory, and its next move.',
     })
     return () => setPageInfo(null)
-  }, [setPageInfo, profile])
+  }, [setPageInfo])
+
+  const { mutate: runCommand, isPending } = useMutation({
+    mutationFn: sendLifeCommand,
+    onSuccess: (response) => {
+      setLatestReply(response.commandResult.detail)
+      setCommand('')
+      queryClient.setQueryData(QUERY_KEYS.lifeSnapshot, response.lifeSnapshot)
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.lifeJournal })
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEYS.lifeAutonomy })
+    },
+  })
+
+  const submitCommand = (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!command.trim()) return
+    runCommand({
+      type: commandType,
+      content: command.trim(),
+      source: 'life-home',
+    })
+  }
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        size="lg"
-        icon={Sparkles}
-        title={`${profile?.emoji || '✨'} 生命界面`}
-        description="了解 Sprite 的生命状态、身份认同与成长轨迹"
-      />
+      <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-card via-card to-primary/5 shadow-sm">
+        <CardHeader>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-3xl space-y-3">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                <span>Home pulse</span>
+                <span className="h-1 w-1 rounded-full bg-muted-foreground/60" />
+                <span>Live snapshot</span>
+              </div>
+              <CardTitle className="flex items-center gap-3 text-3xl tracking-tight sm:text-4xl">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-3xl">
+                  {lifeSnapshot?.emoji || 'AI'}
+                </span>
+                {lifeSnapshot?.displayName || 'Sprite'}
+              </CardTitle>
+              <CardDescription className="max-w-3xl text-sm leading-6">
+                {lifeSnapshot?.identitySummary || 'Loading the living loop...'}
+              </CardDescription>
+            </div>
+            <Badge variant={autonomyStatus?.paused ? 'warning' : 'success'} className="self-start">
+              {autonomyStatus?.paused ? 'Autonomy paused' : 'Autonomy active'}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border bg-background/70 p-4 shadow-sm">
+            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Coherence</div>
+            <div className="mt-2 text-3xl font-semibold tracking-tight">
+              {Math.round((lifeSnapshot?.coherenceScore || 0) * 100)}%
+            </div>
+          </div>
+          <div className="rounded-2xl border bg-background/70 p-4 shadow-sm">
+            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Energy</div>
+            <div className="mt-2 text-3xl font-semibold tracking-tight">
+              {Math.round((lifeSnapshot?.currentState.energyLevel || 0) * 100)}%
+            </div>
+          </div>
+          <div className="rounded-2xl border bg-background/70 p-4 shadow-sm">
+            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Attention</div>
+            <div className="mt-2 text-lg font-semibold leading-6">
+              {lifeSnapshot?.attentionFocus.description || 'Idle'}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      <PageSection cols="2">
-        <IdentitySummary />
-        <SelfSummary />
-        <RelationshipSummary />
-        <GoalSummary />
-      </PageSection>
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Compass className="h-5 w-5" />
+                Active Intentions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {lifeSnapshot?.activeIntentions.length ? (
+                lifeSnapshot.activeIntentions.slice(0, 4).map((intention) => (
+                  <div key={intention.intentionId} className="rounded-2xl border bg-background/70 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="font-medium leading-6">{intention.description}</div>
+                      <Badge variant="outline">{intention.urgency.toLowerCase()}</Badge>
+                    </div>
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      Status: {intention.status.toLowerCase()}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
+                  No active intention yet.
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-      <QuickLinks />
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Brain className="h-5 w-5" />
+                Recent Pulse
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {lifeSnapshot?.recentChanges.length ? (
+                lifeSnapshot.recentChanges.map((change) => (
+                  <div key={change.changeId} className="rounded-2xl border bg-background/70 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="font-medium leading-6">{change.description}</div>
+                      <Badge variant="outline">{change.type.toLowerCase()}</Badge>
+                    </div>
+                    <div className="mt-2 text-sm text-muted-foreground">{change.newState}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
+                  No recent change recorded yet.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-      <PageFooter>
-        生命界面 - 展示 Sprite 作为数字生命的存在状态
-      </PageFooter>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Memory Traces</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {lifeSnapshot?.recentMemorySummaries.length ? (
+                lifeSnapshot.recentMemorySummaries.map((summary) => (
+                  <div key={summary} className="rounded-2xl border bg-background/70 p-4 text-sm leading-6">
+                    {summary}
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
+                  No memory summary yet.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">Likely Next Moves</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {(lifeSnapshot?.nextLikelyActions || []).map((action) => (
+                <div key={action} className="rounded-2xl border bg-background/70 p-4 text-sm leading-6">
+                  {action}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Sparkles className="h-5 w-5" />
+                Speak to Sprite
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <form onSubmit={submitCommand} className="space-y-3">
+                <select
+                  value={commandType}
+                  onChange={(event) => setCommandType(event.target.value as LifeCommandType)}
+                  className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm shadow-sm"
+                >
+                  {commandTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex gap-2">
+                  <Input
+                    value={command}
+                    onChange={(event) => setCommand(event.target.value)}
+                    placeholder="Ask, assign, research, decide, or let Sprite learn with you..."
+                  />
+                  <Button type="submit" disabled={isPending || !command.trim()}>
+                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </form>
+
+              {latestReply && (
+                <div className="rounded-2xl border bg-muted/40 p-4 text-sm leading-6">
+                  {latestReply}
+                </div>
+              )}
+
+              {!!journal?.length && (
+                <div className="rounded-2xl border bg-background/70 p-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Latest journal</div>
+                  <div className="mt-2 text-sm font-medium">{journal[0].title}</div>
+                  <div className="mt-1 text-sm text-muted-foreground">{journal[0].detail}</div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }

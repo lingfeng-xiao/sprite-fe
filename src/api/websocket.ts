@@ -57,7 +57,13 @@ export class ChatWebSocket {
   send(content: string): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
       const request: ChatRequest = { type: 'chat', content }
-      this.ws.send(JSON.stringify(request))
+      try {
+        this.ws.send(JSON.stringify(request))
+      } catch (e) {
+        console.error('Failed to send WebSocket message:', e)
+      }
+    } else {
+      console.warn('WebSocket not open, current state:', this.ws?.readyState)
     }
   }
 

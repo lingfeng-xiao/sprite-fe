@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import type { SpriteState } from '@/types/api'
 
-// ==================== Runtime Store Types ====================
-// Runtime context: sprite state, identity, snapshot (from Phase 6-11 APIs)
+// Legacy runtime store retained for compatibility with frozen sprite/dashboard flows.
+// The life main chain should read from React Query hooks instead.
 
 export interface RuntimeState {
   spriteState: SpriteState | null
@@ -58,7 +58,10 @@ export const useRuntimeStore = create<RuntimeStore>((set, get) => ({
 
   isRunning: () => get().state.spriteState?.isRunning ?? false,
 
-  getSpriteName: () => get().state.spriteState?.identity.name ?? 'Unknown',
+  getSpriteName: () =>
+    get().state.spriteState?.identity.displayName ??
+    get().state.spriteState?.identity.name ??
+    'Unknown',
 
   getSpriteEmoji: () => get().state.spriteState?.identity.emoji ?? '?',
 }))
