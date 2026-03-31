@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -18,12 +18,12 @@ interface MemorySearchProps {
   onResults: (results: SemanticSearchResult[]) => void
 }
 
-export function MemorySearch({ onResults }: MemorySearchProps) {
+export const MemorySearch = React.memo(function MemorySearch({ onResults }: MemorySearchProps) {
   const [query, setQuery] = useState('')
   const [isSearching, setIsSearching] = useState(false)
   const [searchMode, setSearchMode] = useState<'keyword' | 'semantic'>('keyword')
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!query.trim()) return
 
     setIsSearching(true)
@@ -76,13 +76,13 @@ export function MemorySearch({ onResults }: MemorySearchProps) {
     } finally {
       setIsSearching(false)
     }
-  }
+  }, [query, searchMode, onResults])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch()
     }
-  }
+  }, [handleSearch])
 
   return (
     <Card>
@@ -127,4 +127,4 @@ export function MemorySearch({ onResults }: MemorySearchProps) {
       </CardContent>
     </Card>
   )
-}
+})

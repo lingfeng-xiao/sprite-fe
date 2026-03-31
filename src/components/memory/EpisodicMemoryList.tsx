@@ -1,10 +1,11 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Database } from 'lucide-react'
 import { useEpisodicMemories } from '@/hooks/api'
 
-export function EpisodicMemoryList() {
+export const EpisodicMemoryList = React.memo(function EpisodicMemoryList() {
   const { data: memories, isLoading } = useEpisodicMemories()
 
   if (isLoading) {
@@ -82,4 +83,4 @@ export function EpisodicMemoryList() {
       </CardContent>
     </Card>
   )
-}
+})

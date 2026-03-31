@@ -1,10 +1,11 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Sparkles, Link2 } from 'lucide-react'
 import { useSemanticMemories } from '@/hooks/api'
 
-export function SemanticMemoryList() {
+export const SemanticMemoryList = React.memo(function SemanticMemoryList() {
   const { data: memories, isLoading } = useSemanticMemories()
 
   if (isLoading) {
@@ -74,4 +75,4 @@ export function SemanticMemoryList() {
       </CardContent>
     </Card>
   )
-}
+})

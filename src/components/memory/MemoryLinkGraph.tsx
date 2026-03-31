@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -18,7 +19,7 @@ interface MemoryEdge {
   label?: string
 }
 
-export function MemoryLinkGraph() {
+export const MemoryLinkGraph = React.memo(function MemoryLinkGraph() {
   const { data: semantic } = useSemanticMemories()
   const { data: episodic } = useEpisodicMemories()
 
@@ -154,4 +155,4 @@ export function MemoryLinkGraph() {
       </CardContent>
     </Card>
   )
-}
+})

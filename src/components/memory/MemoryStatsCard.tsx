@@ -1,9 +1,10 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Brain } from 'lucide-react'
 import { useMemoryStats } from '@/hooks/api'
 
-export function MemoryStatsCard() {
+export const MemoryStatsCard = React.memo(function MemoryStatsCard() {
   const { data: stats, isLoading } = useMemoryStats()
 
   if (isLoading || !stats) {
@@ -88,4 +89,4 @@ export function MemoryStatsCard() {
       </CardContent>
     </Card>
   )
-}
+})

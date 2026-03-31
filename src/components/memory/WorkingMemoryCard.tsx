@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -5,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Clock } from 'lucide-react'
 import { useWorkingMemory } from '@/hooks/api'
 
-export function WorkingMemoryCard() {
+export const WorkingMemoryCard = React.memo(function WorkingMemoryCard() {
   const { data: working, isLoading } = useWorkingMemory()
 
   if (isLoading || !working) {
@@ -63,4 +64,4 @@ export function WorkingMemoryCard() {
       </CardContent>
     </Card>
   )
-}
+})

@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Search } from 'lucide-react'
@@ -7,7 +8,7 @@ interface SearchResultsProps {
   results: SemanticSearchResult[]
 }
 
-export function SearchResults({ results }: SearchResultsProps) {
+export const SearchResults = React.memo(function SearchResults({ results }: SearchResultsProps) {
   if (results.length === 0) {
     return null
   }
@@ -43,4 +44,4 @@ export function SearchResults({ results }: SearchResultsProps) {
       </CardContent>
     </Card>
   )
-}
+})
