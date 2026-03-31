@@ -12,8 +12,7 @@ import { QUERY_KEYS } from '@/lib/constants'
 import type { LifeCommandType } from '@/types/api'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { StatCard } from '@/components/ui/StatCard'
-
-const commandTypes: LifeCommandType[] = ['ASK', 'TASK', 'RESEARCH', 'ACTION', 'LEARNING', 'DECISION']
+import { CommandTypeSelector } from '@/components/forms/CommandTypeSelector'
 
 export default function ChatPage() {
   const setPageInfo = useSetPageInfo()
@@ -97,17 +96,10 @@ export default function ChatPage() {
 
           <div className="border-t bg-background/60 p-4 backdrop-blur">
             <form onSubmit={submitCommand} className="space-y-3">
-              <select
+              <CommandTypeSelector
                 value={commandType}
-                onChange={(event) => setCommandType(event.target.value as LifeCommandType)}
-                className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm shadow-sm"
-              >
-                {commandTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+                onChange={setCommandType}
+              />
               <div className="flex gap-2">
                 <Input
                   value={input}
