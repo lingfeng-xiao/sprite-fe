@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { SpriteState } from '@/types/api'
 
+// Legacy compatibility store. Prefer React Query for any owner-facing state.
 interface SpriteStore {
   spriteState: SpriteState | null
   isLoading: boolean

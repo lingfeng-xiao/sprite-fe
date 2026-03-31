@@ -7,6 +7,7 @@ export interface PageSectionProps {
   cols?: '1' | '2' | '3' | '4' | 'auto'
   spacing?: 'compact' | 'default' | 'loose'
   noGrid?: boolean
+  variant?: 'default' | 'stats'
   className?: string
 }
 
@@ -30,6 +31,8 @@ const colsMap = {
   'auto': 'grid-cols-[repeat(auto-fit,minmax(300px,1fr))]',
 }
 
+const statsColsMap = 'grid-cols-[repeat(auto-fit,minmax(180px,1fr))]'
+
 export function PageSection({
   title,
   description,
@@ -37,12 +40,15 @@ export function PageSection({
   cols = 'auto',
   spacing = 'default',
   noGrid = false,
+  variant = 'default',
   className,
 }: PageSectionProps) {
+  const gridClass = variant === 'stats' ? statsColsMap : colsMap[cols]
+
   const content = noGrid ? children : (
     <div className={cn(
       'grid w-full',
-      colsMap[cols],
+      gridClass,
       gapMap[spacing]
     )}>
       {children}

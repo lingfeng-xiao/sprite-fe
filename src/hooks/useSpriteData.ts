@@ -1,18 +1,24 @@
 import { useQuery } from '@tanstack/react-query'
 import {
-  getSpriteState,
+  getAutonomyStatus,
   getCognitionDashboard,
   getMemoryVisualization,
   getEvolutionDashboard,
   getEmotionDashboard,
   getHealthDetails,
   getAgentWorkers,
+  getLifeJournal,
+  getLifeSnapshot,
+  getLifeModelConfig,
+  getSpriteState,
   getTeamSprites,
   getTeamSessions,
   getCollaborationStatus,
   discoverSprites,
 } from '@/api/spriteApi'
 import { QUERY_KEYS, REFRESH_INTERVALS } from '@/lib/constants'
+
+// ==================== Life Main Chain ====================
 
 export function useSpriteState() {
   return useQuery({
@@ -24,6 +30,43 @@ export function useSpriteState() {
     throwOnError: false,
   })
 }
+
+export function useLifeSnapshot() {
+  return useQuery({
+    queryKey: QUERY_KEYS.lifeSnapshot,
+    queryFn: getLifeSnapshot,
+    refetchInterval: REFRESH_INTERVALS.lifeSnapshot,
+    staleTime: 5000,
+  })
+}
+
+export function useLifeJournal(limit = 20) {
+  return useQuery({
+    queryKey: [...QUERY_KEYS.lifeJournal, limit],
+    queryFn: () => getLifeJournal(limit),
+    refetchInterval: REFRESH_INTERVALS.lifeJournal,
+    staleTime: 5000,
+  })
+}
+
+export function useAutonomyStatus() {
+  return useQuery({
+    queryKey: QUERY_KEYS.lifeAutonomy,
+    queryFn: getAutonomyStatus,
+    refetchInterval: REFRESH_INTERVALS.lifeAutonomy,
+    staleTime: 5000,
+  })
+}
+
+export function useModelConfig() {
+  return useQuery({
+    queryKey: QUERY_KEYS.modelConfig,
+    queryFn: getLifeModelConfig,
+    staleTime: 30000,
+  })
+}
+
+// ==================== Legacy Sprite / Team / Ops ====================
 
 export function useCognitionDashboard() {
   return useQuery({

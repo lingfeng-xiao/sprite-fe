@@ -1,6 +1,13 @@
 import { apiClient } from './client'
 import type {
+  LifeCommandRequest,
+  LifeCommandResponse,
+  LifeJournalEntry,
+  LifeSnapshot,
+  AutonomyStatus,
+  ModelConfig,
   SpriteState,
+  SpriteStateResponse,
   CognitionDashboardData,
   MemoryVisualizationData,
   EvolutionDashboardData,
@@ -10,7 +17,7 @@ import type {
   CoordinationStatus,
   BackupListResult,
   BackupStatus,
-  WorkerInfo,
+  WorkerListResponse,
   SpriteInfo,
   CollaborationSession,
   Task,
@@ -18,12 +25,68 @@ import type {
   DiscoveryResult,
   TaskType,
   TaskStatus,
-  ModelConfig,
 } from '@/types/api'
 
-// Sprite State
+// ==================== Life Main Chain ====================
+
+export const getLifeSnapshot = () =>
+  apiClient.get<LifeSnapshot>('/api/life/snapshot').then((r) => r.data)
+
+export const sendLifeCommand = (request: LifeCommandRequest) =>
+  apiClient.post<LifeCommandResponse>('/api/life/commands', request).then((r) => r.data)
+
+export const getAutonomyStatus = () =>
+  apiClient.get<AutonomyStatus>('/api/life/autonomy/status').then((r) => r.data)
+
+export const pauseAutonomy = () =>
+  apiClient.post<AutonomyStatus>('/api/life/autonomy/pause').then((r) => r.data)
+
+export const resumeAutonomy = () =>
+  apiClient.post<AutonomyStatus>('/api/life/autonomy/resume').then((r) => r.data)
+
+export const getLifeJournal = (limit = 20) =>
+  apiClient.get<LifeJournalEntry[]>('/api/life/journal', { params: { limit } }).then((r) => r.data)
+
+export const resetLifeState = () =>
+  apiClient.post<LifeSnapshot>('/api/life/reset').then((r) => r.data)
+
+// ==================== Legacy Sprite Runtime ====================
+
+function normalizeSpriteState(response: SpriteStateResponse): SpriteState {
+  const identity = response.identity.identity
+  const memoryStatus = response.memoryStatus
+  const longTermStats = memoryStatus.longTermStats
+
+  return {
+    ...response,
+    identity: {
+      ...response.identity,
+      beingId: identity.beingId,
+      name: identity.displayName,
+      displayName: identity.displayName,
+      essence: identity.essence,
+      emoji: identity.emoji,
+      vibe: identity.vibe,
+      createdAt: identity.createdAt,
+      continuityChain: identity.continuityChain,
+    },
+    memoryStatus: {
+      sensoryCount: memoryStatus.sensoryStimuliCount,
+      workingMemoryUsed: memoryStatus.workingMemoryItems,
+      workingMemoryMax: 7,
+      longTermCount:
+        longTermStats.episodicCount +
+        longTermStats.semanticCount +
+        longTermStats.proceduralCount +
+        longTermStats.perceptiveCount,
+      longTermStats,
+    },
+  }
+}
+
+// Legacy sprite state, retained for frozen dashboard compatibility.
 export const getSpriteState = () =>
-  apiClient.get<SpriteState>('/api/sprite/state').then((r) => r.data)
+  apiClient.get<SpriteStateResponse>('/api/sprite/state').then((r) => normalizeSpriteState(r.data))
 
 export const startSprite = () => apiClient.post('/api/sprite/start')
 
@@ -88,7 +151,7 @@ export const restoreFromBackup = (timestamp: string) =>
 
 // Agent Workers
 export const getAgentWorkers = () =>
-  apiClient.get<WorkerInfo[]>('/api/agent/workers').then((r) => r.data)
+  apiClient.get<WorkerListResponse>('/api/agent/workers').then((r) => r.data.workers)
 
 // ==================== Team Collaboration ====================
 
@@ -131,3 +194,9 @@ export const getModelConfig = () =>
 
 export const updateModelConfig = (config: ModelConfig) =>
   apiClient.put<ModelConfig>('/api/model/config', config).then((r) => r.data)
+
+export const testModelConnection = () =>
+  apiClient.post<{ success: boolean; message: string }>('/api/model/test').then((r) => r.data)
+
+export const getLifeModelConfig = getModelConfig
+export const updateLifeModelConfig = updateModelConfig

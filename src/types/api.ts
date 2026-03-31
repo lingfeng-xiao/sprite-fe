@@ -3,11 +3,12 @@ export interface SpriteState {
   identity: {
     beingId: string
     name: string
+    displayName?: string
     essence: string
     emoji: string
     vibe: string
     createdAt: string
-    continuityChain: string
+    continuityChain: string[]
     personality?: {
       openness: number
       conscientiousness: number
@@ -57,6 +58,48 @@ export interface SpriteState {
     workingMemoryUsed: number
     workingMemoryMax: number
     longTermCount: number
+    longTermStats?: {
+      episodicCount: number
+      semanticCount: number
+      proceduralCount: number
+      perceptiveCount: number
+    }
+  }
+  lastCycleTime: string
+  isRunning: boolean
+  hasLlmSupport: boolean
+}
+
+export interface SpriteStateResponse {
+  identity: {
+    identity: {
+      beingId: string
+      displayName: string
+      essence: string
+      emoji: string
+      vibe: string
+      createdAt: string
+      continuityChain: string[]
+    }
+    personality?: SpriteState['identity']['personality']
+    capabilities?: SpriteState['identity']['capabilities']
+    avatars?: SpriteState['identity']['avatars']
+    metacognition?: SpriteState['identity']['metacognition']
+    growthHistory?: SpriteState['identity']['growthHistory']
+    evolutionLevel?: number
+    evolutionCount?: number
+  }
+  platform: SpriteState['platform']
+  worldModel: SpriteState['worldModel']
+  memoryStatus: {
+    sensoryStimuliCount: number
+    workingMemoryItems: number
+    longTermStats: {
+      episodicCount: number
+      semanticCount: number
+      proceduralCount: number
+      perceptiveCount: number
+    }
   }
   lastCycleTime: string
   isRunning: boolean
@@ -281,7 +324,13 @@ export interface WorkerInfo {
   type: WorkerType
   state: WorkerState
   registeredAt: string
-  lastHeartbeat: string
+  lastHeartbeat?: string
+}
+
+export interface WorkerListResponse {
+  workers: WorkerInfo[]
+  totalCount: number
+  summary: Record<string, unknown>
 }
 
 export type WorkerType = 'PERCEPTION' | 'COGNITION' | 'ACTION'
@@ -419,4 +468,174 @@ export interface ModelConfig {
   baseUrl: string
   temperature: number
   maxTokens: number
+}
+
+export interface LifeCurrentState {
+  attentionFoci: string[]
+  emotionalBaseline: number
+  energyLevel: number
+  coherenceScore: number
+  lastUpdated: string
+  source: string
+}
+
+export interface LifeAttentionFocus {
+  type: string
+  description: string
+  relatedEntityId: string
+  intensity: number
+  startedAt: string
+  expectedDurationMs: number
+}
+
+export interface LifeActiveIntention {
+  intentionId: string
+  description: string
+  relatedTrackId: string | null
+  status: string
+  urgency: string
+  intensity: number
+  createdAt: string
+  activatedAt: string
+  completedAt: string | null
+  deadline: string | null
+  failureReason: string | null
+  dependsOn: string[]
+}
+
+export interface LifeRelationshipSummary {
+  relationshipType: string
+  trustLevel: string
+  trustScore: number
+  relationshipStrength: number
+  interactionCount: number
+  sharedProjectsCount: number
+  topCarePriority: string
+}
+
+export interface LifeRecentChange {
+  changeId: string
+  type: string
+  description: string
+  previousState: string
+  newState: string
+  occurredAt: string
+  trigger: string
+  significance: string
+}
+
+export interface LifePacingState {
+  currentLayer: string
+  status: string
+  pendingChangesCount: number
+  recentChangesCount: number
+  lastSyncTime: string
+  syncRecommendation: string
+}
+
+export interface LifeSnapshot {
+  version: string
+  generatedAt: string
+  identitySummary: string
+  currentState: LifeCurrentState
+  attentionFocus: LifeAttentionFocus
+  activeIntentions: LifeActiveIntention[]
+  relationshipSummary: LifeRelationshipSummary
+  recentChanges: LifeRecentChange[]
+  recentMemorySummaries: string[]
+  nextLikelyActions: string[]
+  coherenceScore: number
+  pacingState: LifePacingState
+  emoji: string
+  displayName: string
+}
+
+export interface LifeCommandResult {
+  commandId: string
+  type: LifeCommandType
+  summary: string
+  detail: string
+  success: boolean
+}
+
+export interface LifeSelfUpdate {
+  energyChanged: boolean
+  energyDelta: number
+  focusChanged: boolean
+  newFocus: string
+  observation: string
+}
+
+export interface LifeRelationshipUpdate {
+  interacted: boolean
+  trustChanged: boolean
+  trustDelta: number
+  interactionType: string
+}
+
+export interface LifeGoalUpdate {
+  intentionTriggered: boolean
+  intentionId: string
+  goalProgressed: boolean
+  goalId: string
+  progressDelta: number
+}
+
+export interface LifeMemoryUpdate {
+  memoryCreated: boolean
+  memoryType: string
+  memoryId: string
+}
+
+export interface LifeGrowthUpdate {
+  patternLearned: boolean
+  patternType: string
+  insight: string
+  skillAcquired: boolean
+  skillName: string
+}
+
+export interface LifeImpactReport {
+  selfUpdate: LifeSelfUpdate
+  relationshipUpdate: LifeRelationshipUpdate
+  goalUpdate: LifeGoalUpdate
+  memoryUpdate: LifeMemoryUpdate
+  growthUpdate: LifeGrowthUpdate
+}
+
+export type LifeCommandType = 'ASK' | 'TASK' | 'RESEARCH' | 'ACTION' | 'LEARNING' | 'DECISION'
+
+export interface LifeCommandRequest {
+  type: LifeCommandType
+  content: string
+  context?: Record<string, unknown>
+  source?: string
+}
+
+export interface LifeCommandResponse {
+  commandResult: LifeCommandResult
+  impactReport: LifeImpactReport
+  lifeSnapshot: LifeSnapshot
+}
+
+export interface AutonomyStatus {
+  mode: string
+  paused: boolean
+  allowInternal: boolean
+  allowReadonly: boolean
+  allowMutating: boolean
+  autonomyFactor: number
+  awarenessLevel: string
+  totalDecisions: number
+  autonomousDecisions: number
+  recentActions: string[]
+  updatedAt: string
+}
+
+export interface LifeJournalEntry {
+  id: number
+  entryType: string
+  title: string
+  detail: string
+  createdAt: string
 }

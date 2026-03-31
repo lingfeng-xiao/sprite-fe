@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
   useMemoryStats,
   useWorkingMemory,
@@ -22,51 +23,15 @@ import {
   Link2,
   GitBranch,
 } from 'lucide-react'
+import { PageLayout } from '@/components/layout/PageLayout'
 
 // ==================== Types ====================
-
-type MemoryTab = 'sensory' | 'working' | 'longterm'
 
 interface SemanticSearchResult {
   memoryId: string
   memoryType: string
   content: string
   similarity: number
-}
-
-// ==================== Tab Button ====================
-
-function TabButton({
-  active,
-  onClick,
-  icon: Icon,
-  label,
-  count,
-}: {
-  active: boolean
-  onClick: () => void
-  icon: React.ComponentType<{ className?: string }>
-  label: string
-  count?: number
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-        active
-          ? 'bg-primary text-primary-foreground'
-          : 'bg-muted text-muted-foreground hover:bg-muted/80'
-      }`}
-    >
-      <Icon className="h-4 w-4" />
-      {label}
-      {count !== undefined && (
-        <Badge variant={active ? 'secondary' : 'outline'} className="ml-1 text-xs">
-          {count}
-        </Badge>
-      )}
-    </button>
-  )
 }
 
 // ==================== Memory Stats Card ====================
@@ -80,7 +45,7 @@ function MemoryStatsCard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5" />
-            记忆统计
+            Memory Statistics
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -95,52 +60,52 @@ function MemoryStatsCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Brain className="h-5 w-5 text-primary" />
-          记忆统计
+          Memory Statistics
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
             <p className="text-2xl font-bold">{stats.totalMemoryCount}</p>
-            <p className="text-xs text-muted-foreground">总记忆数</p>
+            <p className="text-xs text-muted-foreground">Total Memories</p>
           </div>
           <div>
             <p className="text-2xl font-bold">{(stats.averageStrength * 100).toFixed(0)}%</p>
-            <p className="text-xs text-muted-foreground">平均强度</p>
+            <p className="text-xs text-muted-foreground">Average Strength</p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">记忆分布</p>
+          <p className="text-sm font-medium">Memory Distribution</p>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">情景</span>
+              <span className="text-muted-foreground">Episodic</span>
               <span>{stats.typeStats.episodicCount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">语义</span>
+              <span className="text-muted-foreground">Semantic</span>
               <span>{stats.typeStats.semanticCount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">程序</span>
+              <span className="text-muted-foreground">Procedural</span>
               <span>{stats.typeStats.proceduralCount}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">感知</span>
+              <span className="text-muted-foreground">Perceptive</span>
               <span>{stats.typeStats.perceptiveCount}</span>
             </div>
           </div>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">强度分布</p>
+          <p className="text-sm font-medium">Strength Distribution</p>
           <div className="flex gap-1">
             {[
-              { label: '极低', count: stats.strengthDistribution.veryLowCount, color: 'bg-red-200' },
-              { label: '低', count: stats.strengthDistribution.lowCount, color: 'bg-orange-200' },
-              { label: '中', count: stats.strengthDistribution.mediumCount, color: 'bg-yellow-200' },
-              { label: '高', count: stats.strengthDistribution.highCount, color: 'bg-lime-200' },
-              { label: '极高', count: stats.strengthDistribution.veryHighCount, color: 'bg-green-200' },
+              { label: 'Very Low', count: stats.strengthDistribution.veryLowCount, color: 'bg-red-200' },
+              { label: 'Low', count: stats.strengthDistribution.lowCount, color: 'bg-orange-200' },
+              { label: 'Medium', count: stats.strengthDistribution.mediumCount, color: 'bg-yellow-200' },
+              { label: 'High', count: stats.strengthDistribution.highCount, color: 'bg-lime-200' },
+              { label: 'Very High', count: stats.strengthDistribution.veryHighCount, color: 'bg-green-200' },
             ].map((item) => (
               <div
                 key={item.label}
@@ -169,7 +134,7 @@ function WorkingMemoryCard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            工作记忆
+            Working Memory
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -186,14 +151,14 @@ function WorkingMemoryCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-primary" />
-          工作记忆
+          Working Memory
         </CardTitle>
-        <CardDescription>短期活跃的记忆内容</CardDescription>
+        <CardDescription>Short-term active memory content</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">使用率</span>
+            <span className="text-muted-foreground">Usage</span>
             <span className="font-medium">
               {working.used} / {working.max}
             </span>
@@ -202,7 +167,7 @@ function WorkingMemoryCard() {
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">当前内容</p>
+          <p className="text-sm font-medium">Current Items</p>
           <div className="flex flex-wrap gap-2">
             {working.items.length > 0 ? (
               working.items.map((item, idx) => (
@@ -211,7 +176,7 @@ function WorkingMemoryCard() {
                 </Badge>
               ))
             ) : (
-              <span className="text-sm text-muted-foreground">无</span>
+              <span className="text-sm text-muted-foreground">None</span>
             )}
           </div>
         </div>
@@ -231,7 +196,7 @@ function EpisodicMemoryList() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="h-5 w-5" />
-            情景记忆
+            Episodic Memory
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -247,9 +212,9 @@ function EpisodicMemoryList() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Database className="h-5 w-5 text-primary" />
-          情景记忆
+          Episodic Memory
         </CardTitle>
-        <CardDescription>经历和事件记录</CardDescription>
+        <CardDescription>Experience and event records</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {memories && memories.length > 0 ? (
@@ -263,7 +228,7 @@ function EpisodicMemoryList() {
                 <Badge
                   variant="outline"
                   className="text-xs"
-                  title={`强度: ${(memory.strength * 100).toFixed(0)}%`}
+                  title={`Strength: ${(memory.strength * 100).toFixed(0)}%`}
                 >
                   {(memory.strength * 100).toFixed(0)}%
                 </Badge>
@@ -295,7 +260,7 @@ function EpisodicMemoryList() {
             </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">暂无情景记忆</p>
+          <p className="text-sm text-muted-foreground">No episodic memories yet</p>
         )}
       </CardContent>
     </Card>
@@ -313,7 +278,7 @@ function SemanticMemoryList() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            语义记忆
+            Semantic Memory
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -329,9 +294,9 @@ function SemanticMemoryList() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          语义记忆
+          Semantic Memory
         </CardTitle>
-        <CardDescription>概念和知识网络</CardDescription>
+        <CardDescription>Concept and knowledge network</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {memories && memories.length > 0 ? (
@@ -348,7 +313,7 @@ function SemanticMemoryList() {
                 <Badge
                   variant="outline"
                   className="text-xs"
-                  title={`置信度: ${(memory.confidence * 100).toFixed(0)}%`}
+                  title={`Confidence: ${(memory.confidence * 100).toFixed(0)}%`}
                 >
                   {(memory.confidence * 100).toFixed(0)}%
                 </Badge>
@@ -369,7 +334,7 @@ function SemanticMemoryList() {
             </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">暂无语义记忆</p>
+          <p className="text-sm text-muted-foreground">No semantic memories yet</p>
         )}
       </CardContent>
     </Card>
@@ -395,7 +360,6 @@ function MemorySearch({ onResults }: { onResults: (results: SemanticSearchResult
         })
         onResults(response.data)
       } else {
-        // Keyword search - filter all memories client-side
         const [episodic, semantic] = await Promise.all([
           apiClient.get<EpisodicMemory[]>('/api/memories/episodic'),
           apiClient.get<SemanticMemory[]>('/api/memories/semantic'),
@@ -450,22 +414,22 @@ function MemorySearch({ onResults }: { onResults: (results: SemanticSearchResult
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Search className="h-5 w-5 text-primary" />
-          记忆搜索
+          Memory Search
         </CardTitle>
-        <CardDescription>关键词搜索或语义搜索</CardDescription>
+        <CardDescription>Keyword or semantic search</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
           <div className="flex flex-1 gap-2">
             <Input
-              placeholder="输入搜索关键词..."
+              placeholder="Enter search keywords..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               className="flex-1"
             />
             <Button onClick={handleSearch} disabled={isSearching || !query.trim()}>
-              {isSearching ? '搜索中...' : '搜索'}
+              {isSearching ? 'Searching...' : 'Search'}
             </Button>
           </div>
         </div>
@@ -475,14 +439,14 @@ function MemorySearch({ onResults }: { onResults: (results: SemanticSearchResult
             size="sm"
             onClick={() => setSearchMode('keyword')}
           >
-            关键词
+            Keyword
           </Button>
           <Button
             variant={searchMode === 'semantic' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setSearchMode('semantic')}
           >
-            语义搜索
+            Semantic
           </Button>
         </div>
       </CardContent>
@@ -502,9 +466,9 @@ function SearchResults({ results }: { results: SemanticSearchResult[] }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Search className="h-5 w-5 text-primary" />
-          搜索结果
+          Search Results
         </CardTitle>
-        <CardDescription>找到 {results.length} 条相关记忆</CardDescription>
+        <CardDescription>Found {results.length} related memories</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {results.map((result, idx) => (
@@ -516,10 +480,10 @@ function SearchResults({ results }: { results: SemanticSearchResult[] }) {
               <p className="flex-1 text-sm">{result.content}</p>
               <div className="flex flex-col items-end gap-1">
                 <Badge variant="outline" className="text-xs">
-                  {result.memoryType === 'episodic' ? '情景' : '语义'}
+                  {result.memoryType === 'episodic' ? 'Episodic' : 'Semantic'}
                 </Badge>
                 <span className="text-xs text-muted-foreground">
-                  相似度: {(result.similarity * 100).toFixed(0)}%
+                  Similarity: {(result.similarity * 100).toFixed(0)}%
                 </span>
               </div>
             </div>
@@ -550,13 +514,11 @@ function MemoryLinkGraph() {
   const { data: semantic } = useSemanticMemories()
   const { data: episodic } = useEpisodicMemories()
 
-  // Build nodes and edges from semantic memories (they have connections)
   const { nodes, edges } = useMemo(() => {
     const nodes: MemoryNode[] = []
     const edges: MemoryEdge[] = []
     const nodeIds = new Set<string>()
 
-    // Add semantic memories as nodes
     semantic?.forEach((m) => {
       if (!nodeIds.has(m.id)) {
         nodes.push({
@@ -567,7 +529,6 @@ function MemoryLinkGraph() {
         nodeIds.add(m.id)
       }
 
-      // Add connections as edges
       m.connections?.forEach((conn) => {
         edges.push({
           source: m.id,
@@ -575,7 +536,6 @@ function MemoryLinkGraph() {
           label: 'relates_to',
         })
 
-        // Add target node if not exists
         if (!nodeIds.has(conn)) {
           nodes.push({
             id: conn,
@@ -587,7 +547,6 @@ function MemoryLinkGraph() {
       })
     })
 
-    // Add episodic memories as nodes (limited)
     episodic?.slice(0, 10).forEach((m) => {
       if (!nodeIds.has(m.id)) {
         nodes.push({
@@ -608,7 +567,7 @@ function MemoryLinkGraph() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <GitBranch className="h-5 w-5" />
-            记忆链接图
+            Memory Link Graph
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -623,32 +582,29 @@ function MemoryLinkGraph() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <GitBranch className="h-5 w-5 text-primary" />
-          记忆链接图
+          Memory Link Graph
         </CardTitle>
-        <CardDescription>记忆之间的关联关系</CardDescription>
+        <CardDescription>Relationships between memories</CardDescription>
       </CardHeader>
       <CardContent>
         {nodes.length > 0 ? (
           <div className="relative h-64 overflow-hidden rounded-lg border bg-muted/20">
-            {/* Simple CSS-based graph visualization */}
             <div className="absolute inset-0 p-4">
-              {/* Legend */}
               <div className="absolute left-2 top-2 flex flex-col gap-1 text-xs">
                 <div className="flex items-center gap-1">
                   <div className="h-3 w-3 rounded-full bg-blue-500" />
-                  <span>情景记忆</span>
+                  <span>Episodic</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="h-3 w-3 rounded-full bg-green-500" />
-                  <span>语义记忆</span>
+                  <span>Semantic</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="h-3 w-3 rounded-full bg-gray-400" />
-                  <span>概念节点</span>
+                  <span>Concept</span>
                 </div>
               </div>
 
-              {/* Nodes - Simple grid layout */}
               <div className="flex h-full flex-wrap content-start gap-2">
                 {nodes.slice(0, 20).map((node) => {
                   const colors = {
@@ -674,19 +630,18 @@ function MemoryLinkGraph() {
                 })}
                 {nodes.length > 20 && (
                   <div className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
-                    +{nodes.length - 20} 更多
+                    +{nodes.length - 20} more
                   </div>
                 )}
               </div>
 
-              {/* Edges count */}
               <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
-                {edges.length} 条关联
+                {edges.length} connections
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">暂无链接数据</p>
+          <p className="text-sm text-muted-foreground">No link data yet</p>
         )}
       </CardContent>
     </Card>
@@ -696,7 +651,6 @@ function MemoryLinkGraph() {
 // ==================== Main Memory Page ====================
 
 export default function MemoryPage() {
-  const [activeTab, setActiveTab] = useState<MemoryTab>('sensory')
   const [searchResults, setSearchResults] = useState<SemanticSearchResult[]>([])
 
   const { data: episodic } = useEpisodicMemories()
@@ -704,65 +658,53 @@ export default function MemoryPage() {
   const { data: working } = useWorkingMemory()
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-          <Brain className="h-8 w-8" />
-          记忆浏览器
-        </h1>
-        <p className="text-muted-foreground">
-          探索 Sprite 的记忆系统：情景、语义与工作记忆
-        </p>
-      </div>
-
+    <PageLayout
+      header={{
+        title: 'Memory Browser',
+        icon: Brain,
+        description: "Explore Sprite's memory system: episodic, semantic, and working memory",
+      }}
+    >
       {/* Memory Stats */}
       <MemoryStatsCard />
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2">
-        <TabButton
-          active={activeTab === 'sensory'}
-          onClick={() => setActiveTab('sensory')}
-          icon={Clock}
-          label="感知记忆"
-          count={working?.items.length}
-        />
-        <TabButton
-          active={activeTab === 'working'}
-          onClick={() => setActiveTab('working')}
-          icon={Database}
-          label="工作记忆"
-          count={working?.used}
-        />
-        <TabButton
-          active={activeTab === 'longterm'}
-          onClick={() => setActiveTab('longterm')}
-          icon={Sparkles}
-          label="长期记忆"
-          count={(episodic?.length || 0) + (semantic?.length || 0)}
-        />
-      </div>
+      <Tabs defaultValue="working" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="working">
+            <Clock className="mr-2 h-4 w-4" />
+            Working ({working?.used || 0})
+          </TabsTrigger>
+          <TabsTrigger value="episodic">
+            <Database className="mr-2 h-4 w-4" />
+            Episodic ({episodic?.length || 0})
+          </TabsTrigger>
+          <TabsTrigger value="semantic">
+            <Sparkles className="mr-2 h-4 w-4" />
+            Semantic ({semantic?.length || 0})
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Tab Content */}
-      {activeTab === 'sensory' && (
-        <div className="space-y-4">
+        <TabsContent value="working">
           <WorkingMemoryCard />
-        </div>
-      )}
+        </TabsContent>
 
-      {activeTab === 'working' && (
-        <div className="space-y-4">
-          <WorkingMemoryCard />
-        </div>
-      )}
+        <TabsContent value="episodic">
+          <Card>
+            <CardContent className="pt-6">
+              <EpisodicMemoryList />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {activeTab === 'longterm' && (
-        <div className="grid gap-4 md:grid-cols-2">
-          <EpisodicMemoryList />
-          <SemanticMemoryList />
-        </div>
-      )}
+        <TabsContent value="semantic">
+          <Card>
+            <CardContent className="pt-6">
+              <SemanticMemoryList />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Memory Search */}
       <MemorySearch onResults={setSearchResults} />
@@ -772,6 +714,6 @@ export default function MemoryPage() {
 
       {/* Memory Link Graph */}
       <MemoryLinkGraph />
-    </div>
+    </PageLayout>
   )
 }

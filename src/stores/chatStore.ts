@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 export interface ChatMessageItem {
   id: string
-  role: 'user' | 'sprite'
+  role: 'user' | 'sprite' | 'system'
   content: string
   timestamp: Date
   actions?: string[]
