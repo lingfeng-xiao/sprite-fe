@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { FormField } from '@/components/ui/FormField'
 import { useSetPageInfo } from '@/contexts/PageContext'
 import { useAutonomyStatus, useLifeSnapshot } from '@/hooks/useSpriteData'
 import { QUERY_KEYS } from '@/lib/constants'
@@ -177,8 +178,7 @@ export default function SettingsPage() {
           <CardTitle>Model Bridge</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 lg:grid-cols-2">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Provider</label>
+          <FormField label="Provider">
             <select
               value={form.provider}
               onChange={(event) => setForm((current) => ({ ...current, provider: event.target.value }))}
@@ -186,47 +186,42 @@ export default function SettingsPage() {
             >
               <option value="minimax">MiniMax</option>
             </select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Model name</label>
+          </FormField>
+          <FormField label="Model name">
             <Input
               value={form.modelName}
               onChange={(event) => setForm((current) => ({ ...current, modelName: event.target.value }))}
             />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">API key</label>
+          </FormField>
+          <FormField label="API key">
             <Input
               type="password"
               value={form.apiKey}
               onChange={(event) => setForm((current) => ({ ...current, apiKey: event.target.value }))}
             />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Base URL</label>
+          </FormField>
+          <FormField label="Base URL">
             <Input
               value={form.baseUrl}
               onChange={(event) => setForm((current) => ({ ...current, baseUrl: event.target.value }))}
             />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Temperature</label>
+          </FormField>
+          <FormField label="Temperature">
             <Input
               value={String(form.temperature)}
               onChange={(event) =>
                 setForm((current) => ({ ...current, temperature: Number(event.target.value) || 0.7 }))
               }
             />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Max tokens</label>
+          </FormField>
+          <FormField label="Max tokens">
             <Input
               value={String(form.maxTokens)}
               onChange={(event) =>
                 setForm((current) => ({ ...current, maxTokens: Number(event.target.value) || 4096 }))
               }
             />
-          </div>
+          </FormField>
           <div className="flex flex-wrap gap-3 lg:col-span-2">
             <Button onClick={() => saveConfig(form)} disabled={isSaving}>
               {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
