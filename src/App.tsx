@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import ChatPage from '@/pages/ChatPage'
 import LifePage from '@/pages/LifePage'
 import MemoryPage from '@/pages/MemoryPage'
@@ -31,5 +32,9 @@ function AppContent() {
 }
 
 export default function App() {
-  return <AppContent />
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  )
 }

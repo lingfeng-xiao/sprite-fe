@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge, badgeVariants } from '@/components/ui/badge'
@@ -21,7 +22,7 @@ interface DataCardProps {
   className?: string
 }
 
-export function DataCard({
+export const DataCard = React.memo(function DataCard({
   title,
   icon: Icon,
   iconClassName,
@@ -86,15 +87,15 @@ export function DataCard({
       </CardContent>
     </Card>
   )
-}
+})
 
 interface StatCardProps extends Omit<DataCardProps, 'variant' | 'title'> {
   title?: string
 }
 
-export function StatCard({
+export const StatCard = React.memo(function StatCard({
   title,
   ...props
 }: StatCardProps) {
   return <DataCard variant="stat" title={title} {...props} />
-}
+})

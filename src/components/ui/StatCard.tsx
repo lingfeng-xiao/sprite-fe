@@ -37,7 +37,7 @@ export interface StatCardProps
   }
 }
 
-function StatCard({
+const StatCard = React.memo(function StatCard({
   className,
   label,
   value,
@@ -86,6 +86,6 @@ function StatCard({
       </div>
     </div>
   )
-}
+})
 
 export { StatCard, statCardVariants }

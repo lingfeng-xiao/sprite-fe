@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 export interface PageSectionProps {
@@ -33,7 +34,7 @@ const colsMap = {
 
 const statsColsMap = 'grid-cols-[repeat(auto-fit,minmax(180px,1fr))]'
 
-export function PageSection({
+export const PageSection = React.memo(function PageSection({
   title,
   description,
   children,
@@ -68,4 +69,4 @@ export function PageSection({
       {content}
     </section>
   )
-}
+})

@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { cn } from '@/lib/utils'
 import type { LucideIcon } from 'lucide-react'
 
@@ -11,7 +12,7 @@ export interface PageHeaderProps {
   className?: string
 }
 
-export function PageHeader({
+export const PageHeader = React.memo(function PageHeader({
   title,
   description,
   icon: Icon,
@@ -48,4 +49,4 @@ export function PageHeader({
       )}
     </div>
   )
-}
+})
