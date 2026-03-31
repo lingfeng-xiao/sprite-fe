@@ -13,8 +13,7 @@ import { Input } from '@/components/ui/input'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { PageSection } from '@/components/layout/PageSection'
 import { StatCard } from '@/components/ui/StatCard'
-
-const commandTypes: LifeCommandType[] = ['ASK', 'TASK', 'RESEARCH', 'ACTION', 'LEARNING', 'DECISION']
+import { CommandTypeSelector } from '@/components/forms/CommandTypeSelector'
 
 export default function LifePage() {
   const setPageInfo = useSetPageInfo()
@@ -199,17 +198,10 @@ export default function LifePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={submitCommand} className="space-y-3">
-              <select
+              <CommandTypeSelector
                 value={commandType}
-                onChange={(event) => setCommandType(event.target.value as LifeCommandType)}
-                className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm shadow-sm"
-              >
-                {commandTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+                onChange={setCommandType}
+              />
               <div className="flex gap-2">
                 <Input
                   value={command}
